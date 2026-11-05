@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
+import { modeloGemini } from "../ia/modelo.js";
 
 export const LecturaComprobanteSchema = z.object({
   monto: z.number().positive(),
@@ -25,12 +26,13 @@ export class LectorComprobanteSimulado implements LectorComprobante {
 }
 
 const LecturaVisionSchema = LecturaComprobanteSchema.omit({ demo: true });
+export function modeloLectorComprobante(env: NodeJS.ProcessEnv = process.env): string {
+  return modeloGemini(env);
+}
 export class LectorComprobanteReal implements LectorComprobante {
   async leer(imagen: string): Promise<LecturaComprobante> {
-    const modelo = process.env.OKI_MODELO_VISION;
-    if (!modelo) throw new Error("OKI_MODELO_VISION es obligatoria para leer comprobantes reales");
     const resultado = await generateObject({
-      model: google(modelo), schema: LecturaVisionSchema,
+      model: google(modeloLectorComprobante()), schema: LecturaVisionSchema,
       messages: [{ role: "user", content: [{ type: "text", text: "Extrae el comprobante de transferencia. No inventes datos." }, { type: "image", image: new URL(imagen) }] }],
     });
     return LecturaComprobanteSchema.parse({ ...resultado.object, demo: false });

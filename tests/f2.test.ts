@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { AgenteConciliador } from "../src/agente/conciliar.js";
 import { empatarComprobante } from "../src/comprobantes/empatar.js";
-import { LectorComprobanteReal, type LecturaComprobante } from "../src/comprobantes/lector.js";
+import { modeloLectorComprobante, type LecturaComprobante } from "../src/comprobantes/lector.js";
 import { cargarTransferencias } from "../src/config/transferencias.js";
 import { libroDemo } from "../src/libro/index.js";
 import { PayPalSimulado, type CobrosPayPal } from "../src/paypal/index.js";
@@ -69,9 +69,8 @@ describe("F2 conciliación", () => {
   it("rechaza configuración inválida", () => {
     const ruta = join(tmpdir(), "oki-transferencias-invalida.json"); writeFileSync(ruta, '{"metodos":[{"id":"sin-referencia","nombre":"x","campos":[]}]}'); expect(() => cargarTransferencias(ruta)).toThrow("Configuración de transferencias inválida");
   });
-  it("lector real exige OKI_MODELO_VISION", async () => {
-    const valor = process.env.OKI_MODELO_VISION; delete process.env.OKI_MODELO_VISION;
-    await expect(new LectorComprobanteReal().leer("https://example.invalid/demo.png")).rejects.toThrow("OKI_MODELO_VISION"); process.env.OKI_MODELO_VISION = valor;
+  it("lector real usa el modelo Gemini central, no OKI_MODELO_VISION", () => {
+    expect(modeloLectorComprobante({ OKI_MODELO_VISION: "modelo-obsoleto", OKI_GEMINI_MODEL: "modelo-central" })).toBe("modelo-central");
   });
   it.fails("control mutante: un empate roto no acepta monto mayor al saldo", () => {
     const empateRoto = (monto: number, saldo: number): boolean => monto >= 0 && saldo >= 0;

@@ -8,6 +8,10 @@ OKI is a keyless, bilingual DEMO of accounts receivable for a Mexican small serv
 
 The default demo language is English. Set `OKI_LANG=es` for Spanish.
 
+## AI configuration
+
+Leave `GOOGLE_GENERATIVE_AI_API_KEY` unset to run the fixed-text template. With a key, the demo uses Gemini to draft only the DEMO debtor message; money, matching, and approval remain deterministic. `OKI_GEMINI_MODEL` is optional and overrides the single default defined in `src/ia/modelo.ts`. If Gemini is unavailable, the demo reports the failure and uses the template. Never commit a key.
+
 ```bash
 npm test
 npm run demo
@@ -39,3 +43,7 @@ flowchart LR
 ## Español
 
 OKI es una DEMO bilingüe, sin llaves incluidas, para gestionar cuentas por cobrar. Para correrla en español usa `npm run demo:es`; con credenciales sandbox ya configuradas, usa `npm run demo:sandbox:es`. La demo muestra el resumen de cada cuenta en español y manda al deudor un mensaje DEMO en español.
+
+### Configuración de IA
+
+Sin `GOOGLE_GENERATIVE_AI_API_KEY`, la demo usa texto fijo. Con una llave, Gemini redacta únicamente el mensaje DEMO al deudor; los montos, el empate y la aprobación siguen siendo deterministas. `OKI_GEMINI_MODEL` es opcional y sustituye el único modelo predeterminado de `src/ia/modelo.ts`. Si Gemini no está disponible, la demo lo informa y usa la plantilla. Nunca guardes una llave en el repositorio.

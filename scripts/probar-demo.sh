@@ -29,12 +29,19 @@ printf '%s\n' "$output"
 LANGUAGE="$idioma" DEMO_OUTPUT="$output" node --input-type=module <<'NODE'
 const output = process.env.DEMO_OUTPUT ?? "";
 const language = process.env.LANGUAGE;
+const hasApiKey = Boolean(process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim());
 if (language === "en") {
-  if (!output.includes("CONFIGURED DEMO TRANSFER METHODS") || !output.includes("ACCOUNT SUMMARY AFTER") || !output.includes("DEMO DEBTOR MESSAGES") || !output.includes("Hello Alma")) throw new Error("La demo inglesa no imprimió sus rótulos en inglés");
+  if (!output.includes("CONFIGURED DEMO TRANSFER METHODS") || !output.includes("ACCOUNT SUMMARY AFTER") || !output.includes("DEMO DEBTOR MESSAGES") || !output.includes(hasApiKey ? "Alma" : "Hello Alma")) throw new Error("La demo inglesa no imprimió sus rótulos en inglés");
   if (/MÉTODOS DE TRANSFERENCIA|RESUMEN DEL LIBRO|COMPROBANTE DEMO|MENSAJES DEMO AL DEUDOR|Hola Alma/.test(output)) throw new Error("La demo inglesa imprimió un rótulo para personas en español");
+  if (!hasApiKey && !output.includes("TEMPLATE DRAFT · no API key (fixed text)")) throw new Error("La demo inglesa sin llave no informó TEMPLATE DRAFT");
+  if (hasApiKey && !output.includes("AI DRAFT · Gemini ") && !output.includes("AI UNAVAILABLE · ")) throw new Error("La demo inglesa con llave no informó IA");
+  if (hasApiKey && !output.includes("AI DRAFT · Gemini ")) throw new Error("FALLA: la demo inglesa con llave no obtuvo AI DRAFT live");
 }
 if (language === "es") {
-  if (!output.includes("MÉTODOS DE TRANSFERENCIA DEMO CONFIGURADOS") || !output.includes("RESUMEN DEL LIBRO DESPUÉS") || !output.includes("MENSAJES DEMO AL DEUDOR") || !output.includes("Hola Alma")) throw new Error("La demo española no imprimió sus rótulos en español");
+  if (!output.includes("MÉTODOS DE TRANSFERENCIA DEMO CONFIGURADOS") || !output.includes("RESUMEN DEL LIBRO DESPUÉS") || !output.includes("MENSAJES DEMO AL DEUDOR") || !output.includes(hasApiKey ? "Alma" : "Hola Alma")) throw new Error("La demo española no imprimió sus rótulos en español");
+  if (!hasApiKey && !output.includes("BORRADOR DE PLANTILLA · sin llave API (texto fijo)")) throw new Error("La demo española sin llave no informó su plantilla");
+  if (hasApiKey && !output.includes("BORRADOR IA · Gemini ") && !output.includes("IA NO DISPONIBLE · ")) throw new Error("La demo española con llave no informó IA");
+  if (hasApiKey && !output.includes("BORRADOR IA · Gemini ")) throw new Error("FALLA: la demo española con llave no obtuvo borrador IA en vivo");
 }
 const match = output.match(/LEDGER_AFTER_JSON ([\s\S]+)$/);
 if (!match) throw new Error("No se imprimió el libro final");

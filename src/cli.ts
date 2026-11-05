@@ -1,4 +1,4 @@
-import { cobrarVencidas, RedactorPlantilla } from "./agente/cobrar.js";
+import { cobrarVencidas, seleccionarRedactor } from "./agente/cobrar.js";
 import { consultarCobros } from "./agente/consultar.js";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -34,7 +34,9 @@ async function main(): Promise<void> {
   console.log(t.ledgerBefore); libro.cuentas.forEach((cuenta) => console.log(t.summary(cuenta)));
   console.log("LEDGER_BEFORE_JSON", JSON.stringify(libro, null, 2));
   const paypal = sandbox ? new PayPalReal(process.env.PAYPAL_CLIENT_ID ?? "", process.env.PAYPAL_CLIENT_SECRET ?? "", grabar ? grabadora : undefined) : new PayPalSimulado();
-  const mensajes = await cobrarVencidas(libro, paypal, politicaDemo, new RedactorPlantilla(), idioma);
+  const redactor = seleccionarRedactor();
+  const mensajes = await cobrarVencidas(libro, paypal, politicaDemo, redactor.redactor, idioma);
+  console.log(t.draftStatus(redactor.estado()));
   if (sandbox) {
     const invoiceId = libro.cuentas[0].paypalInvoiceId;
     if (!invoiceId) {

@@ -1,4 +1,6 @@
 import type { Cuenta } from "./libro/index.js";
+import { modeloGemini } from "./ia/modelo.js";
+import type { EstadoBorrador } from "./agente/cobrar.js";
 
 export type Idioma = "en" | "es";
 
@@ -19,6 +21,11 @@ const textos = {
     sandboxMissing: "The sandbox DEMO invoice was not created",
     recordingsSaved: "Sanitized sandbox responses saved in fixtures/.",
     demoError: "DEMO ERROR",
+    draftStatus: (estado: EstadoBorrador) => {
+      if (estado.tipo === "plantilla") return "TEMPLATE DRAFT · no API key (fixed text)";
+      if (estado.tipo === "ia_viva") return `AI DRAFT · Gemini ${modeloGemini()} · live`;
+      return `AI UNAVAILABLE · ${estado.motivo} · using template`;
+    },
     status: { pendiente: "pending", vencido: "overdue", por_confirmar: "awaiting confirmation", parcial: "partially paid", pagado: "paid", error: "error" },
     summary: (cuenta: Cuenta) => `ID: ${cuenta.id} | Customer: ${cuenta.cliente} | Status: ${textos.en.status[cuenta.estado]} | Amount: $${cuenta.monto.toFixed(2)} ${cuenta.moneda} | Balance: $${cuenta.saldo.toFixed(2)} ${cuenta.moneda}`,
     message: (cliente: string, monto: number, urlPago: string) => `Hello ${cliente}, this is a DEMO message. Your $${monto.toFixed(2)} MXN payment is ready: ${urlPago}`,
@@ -36,6 +43,11 @@ const textos = {
     sandboxMissing: "No se creó el cobro DEMO sandbox",
     recordingsSaved: "Respuestas sandbox sanitizadas guardadas en fixtures/.",
     demoError: "ERROR DEMO",
+    draftStatus: (estado: EstadoBorrador) => {
+      if (estado.tipo === "plantilla") return "BORRADOR DE PLANTILLA · sin llave API (texto fijo)";
+      if (estado.tipo === "ia_viva") return `BORRADOR IA · Gemini ${modeloGemini()} · en vivo`;
+      return `IA NO DISPONIBLE · ${estado.motivo} · usando plantilla`;
+    },
     status: { pendiente: "pendiente", vencido: "vencido", por_confirmar: "por confirmar", parcial: "parcial", pagado: "pagado", error: "error" },
     summary: (cuenta: Cuenta) => `ID: ${cuenta.id} | Cliente: ${cuenta.cliente} | Estado: ${textos.es.status[cuenta.estado]} | Monto: $${cuenta.monto.toFixed(2)} ${cuenta.moneda} | Saldo: $${cuenta.saldo.toFixed(2)} ${cuenta.moneda}`,
     message: (cliente: string, monto: number, urlPago: string) => `Hola ${cliente}, este es un mensaje DEMO. Tu cobro por $${monto.toFixed(2)} MXN está listo: ${urlPago}`,

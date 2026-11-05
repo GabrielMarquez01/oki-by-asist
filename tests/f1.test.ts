@@ -1,11 +1,26 @@
 import { describe, expect, it } from "vitest";
-import { cobrarVencidas, RedactorPlantilla } from "../src/agente/cobrar.js";
+import { cobrarVencidas, RedactorConRespaldo, RedactorPlantilla, seleccionarRedactor, type Redactor } from "../src/agente/cobrar.js";
 import { consultarCobros } from "../src/agente/consultar.js";
+import { modeloGemini, MODELO_GEMINI_PREDETERMINADO } from "../src/ia/modelo.js";
 import { libroDemo } from "../src/libro/index.js";
 import { PayPalReal, PayPalSimulado, type CobrosPayPal } from "../src/paypal/index.js";
 import { evaluarPolitica, politicaDemo } from "../src/politica.js";
 
 describe("F1 cobrar", () => {
+  it("selecciona el modelo Gemini configurado o su único predeterminado", () => {
+    expect(modeloGemini({})).toBe(MODELO_GEMINI_PREDETERMINADO);
+    expect(modeloGemini({ OKI_GEMINI_MODEL: "gemini-prueba" })).toBe("gemini-prueba");
+  });
+  it("selecciona plantilla sin llave y Gemini con llave", () => {
+    expect(seleccionarRedactor({}).estado()).toEqual({ tipo: "plantilla" });
+    expect(seleccionarRedactor({ GOOGLE_GENERATIVE_AI_API_KEY: "llave-sintetica" }).estado()).toEqual({ tipo: "ia_viva" });
+  });
+  it("una falla del redactor usa plantilla sin afectar el flujo", async () => {
+    const fallido: Redactor = { redactar: async () => { throw Object.assign(new Error("no usar"), { statusCode: 404 }); } };
+    const cuenta = libroDemo().cuentas[0]; const redactor = new RedactorConRespaldo(fallido);
+    await expect(redactor.redactar(cuenta, "https://demo.invalid/pago", "cercano", "en")).resolves.toContain("Hello Alma");
+    expect(redactor.estado()).toEqual({ tipo: "ia_no_disponible", motivo: "HTTP 404" });
+  });
   it("crea cobro con monto exacto y política parcial", async () => {
     const paypal = new PayPalSimulado(); const libro = libroDemo();
     await cobrarVencidas(libro, paypal, politicaDemo, new RedactorPlantilla());
