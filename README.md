@@ -1,5 +1,9 @@
 # OKI by AsisT
 
+<p align="center"><img src="assets/brand/oki-by-asist-banner.png" alt="OKI by AsisT — Coli the hummingbird mascot holding a paid receipt. Get paid the way Mexico pays." width="720"></p>
+
+> **Get paid the way Mexico pays.** Meet Coli, the hummingbird that brings back your receipts with a ✓.
+
 OKI is a keyless, bilingual DEMO of accounts receivable for a Mexican small service business. Every person, message, and transfer receipt is synthetic and labelled `DEMO`. The code only permits the PayPal sandbox for its real adapter; it does not select live mode.
 
 The default demo language is English. Set `OKI_LANG=es` for Spanish.
