@@ -19,8 +19,13 @@ export type LecturaComprobante = z.infer<typeof LecturaComprobanteSchema>;
 export interface LectorComprobante { leer(origen: string): Promise<LecturaComprobante>; }
 
 export class LectorComprobanteSimulado implements LectorComprobante {
+  constructor(private readonly hoy = new Date()) {}
+
   async leer(ruta: string): Promise<LecturaComprobante> {
-    try { return LecturaComprobanteSchema.parse(JSON.parse(readFileSync(ruta, "utf8"))); }
+    try {
+      const lectura = LecturaComprobanteSchema.parse(JSON.parse(readFileSync(ruta, "utf8")));
+      return { ...lectura, fecha: new Date(this.hoy.getTime() - 86400000).toISOString().slice(0, 10) };
+    }
     catch (error: unknown) { throw new Error(`Comprobante DEMO inválido: ${error instanceof Error ? error.message : "error desconocido"}`); }
   }
 }

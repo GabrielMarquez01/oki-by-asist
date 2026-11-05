@@ -10,6 +10,7 @@ import { empatarComprobante } from "./comprobantes/empatar.js";
 import { AgenteConciliador } from "./agente/conciliar.js";
 import { cargarTransferencias } from "./config/transferencias.js";
 import { idiomaActual, texto } from "./i18n.js";
+import { z } from "zod";
 
 const sandbox = process.argv.includes("--sandbox");
 const grabar = process.argv.includes("--grabar");
@@ -27,7 +28,8 @@ async function main(): Promise<void> {
   const idioma = idiomaActual(); const t = texto(idioma);
   const transferencias = cargarTransferencias();
   console.log(t.transferMethods, transferencias.metodos.map((metodo) => metodo.id).join(", "));
-  const libro = libroDemo();
+  const hoy = process.env.OKI_HOY === undefined ? new Date() : new Date(`${z.string().date().parse(process.env.OKI_HOY)}T00:00:00Z`);
+  const libro = libroDemo(hoy);
   if (sandbox) libro.cuentas[1].estado = "pendiente";
   // En sandbox, los ids sintéticos del libro demo (INV-DEMO-*) no existen en PayPal: get_invoice da 404 (medido 2026-11-04).
   if (sandbox) for (const cuenta of libro.cuentas) if (cuenta.paypalInvoiceId?.startsWith("INV-DEMO")) delete cuenta.paypalInvoiceId;
@@ -44,10 +46,10 @@ async function main(): Promise<void> {
       if (motivo) { console.error(t.sandboxReason); console.error("ERROR_JSON", JSON.stringify({ message: motivo })); }
       throw new Error(t.sandboxMissing);
     }
-    await paypal.registrarPagoExterno(invoiceId, { monto: libro.cuentas[0].monto * 0.4, metodo: "BANK_TRANSFER", fecha: new Date().toISOString().slice(0, 10) });
+    await paypal.registrarPagoExterno(invoiceId, { monto: libro.cuentas[0].monto * 0.4, metodo: "BANK_TRANSFER", fecha: hoy.toISOString().slice(0, 10) });
     await consultarCobros(libro, paypal);
   } else {
-    const lector = new LectorComprobanteSimulado(); const agente = new AgenteConciliador(libro, paypal);
+    const lector = new LectorComprobanteSimulado(hoy); const agente = new AgenteConciliador(libro, paypal);
     const bueno = await lector.leer("fixtures/comprobantes/bueno.json");
     const conciliacionBuena = empatarComprobante("CON-DEMO-001", bueno, libro, politicaDemo, agente.referenciasUsadas);
     console.log(t.goodReceipt); console.log("GOOD_RECEIPT_JSON", JSON.stringify(conciliacionBuena));
