@@ -1,0 +1,6 @@
+{
+  "metodos": [
+    { "id": "spei", "nombre": "SPEI", "campos": ["referencia", "claveRastreo", "bancoEmisor"] },
+    { "id": "generico", "nombre": "Transferencia genérica", "campos": ["referencia"] }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "cobra-agent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "demo": "node --import tsx src/cli.ts",
+    "demo:es": "OKI_LANG=es node --import tsx src/cli.ts",
+    "demo:sandbox": "node --import tsx src/cli.ts --sandbox",
+    "demo:sandbox:es": "OKI_LANG=es node --import tsx src/cli.ts --sandbox",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "private": "true",
+  "dependencies": {
+    "@ai-sdk/google": "^4.0.111",
+    "@paypal/agent-toolkit": "^1.11.0",
+    "ai": "^7.0.162",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "_origen": "sintetico",
+  "nota": "El CLI genera vencimientos relativos a hoy; esta muestra documenta las seis cuentas DEMO.",
+  "cuentas": [
+    { "id": "DEMO-001", "cliente": "DEMO Alma", "monto": 1200, "moneda": "MXN", "estado": "vencido", "via": "paypal" },
+    { "id": "DEMO-002", "cliente": "DEMO Bruno", "monto": 650, "moneda": "MXN", "estado": "vencido", "via": "paypal" },
+    { "id": "DEMO-003", "cliente": "DEMO Cora", "monto": 900, "moneda": "MXN", "estado": "pendiente", "via": "transferencia" },
+    { "id": "DEMO-004", "cliente": "DEMO Dario", "monto": 300, "moneda": "MXN", "estado": "por_confirmar", "via": "transferencia" },
+    { "id": "DEMO-005", "cliente": "DEMO Elsa", "monto": 1500, "moneda": "MXN", "estado": "parcial", "via": "paypal" },
+    { "id": "DEMO-006", "cliente": "DEMO Fabio", "monto": 450, "moneda": "MXN", "estado": "pagado", "via": "efectivo" }
+  ]
+}

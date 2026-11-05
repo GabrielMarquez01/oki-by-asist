@@ -1,0 +1,4 @@
+{
+  "_origen": "sandbox_medido",
+  "respuesta": "{\"rel\":\"self\",\"href\":\"https://api.sandbox.paypal.com/v2/invoicing/invoices/INV2-TEST-ABCD-1234\",\"method\":\"GET\"}"
+}

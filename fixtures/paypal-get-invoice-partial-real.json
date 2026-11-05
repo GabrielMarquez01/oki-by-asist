@@ -1,0 +1,4 @@
+{
+  "_origen": "derivado de respuestas-reales-2026-11-04/get_invoice.json",
+  "respuesta": "{\"id\":\"INV2-27EX-CPU9-N7KF-F2VA\",\"status\":\"PARTIALLY_PAID\",\"amount\":{\"breakdown\":{\"item_total\":{\"currency_code\":\"MXN\",\"value\":\"1200.00\"}},\"currency_code\":\"MXN\",\"value\":\"1200.00\"},\"due_amount\":{\"currency_code\":\"MXN\",\"value\":\"720.00\"},\"payments\":{\"paid_amount\":{\"currency_code\":\"MXN\",\"value\":\"480.00\"},\"transactions\":[{\"type\":\"EXTERNAL\",\"method\":\"BANK_TRANSFER\",\"amount\":{\"currency_code\":\"MXN\",\"value\":\"480.00\"}}]}}"
+}

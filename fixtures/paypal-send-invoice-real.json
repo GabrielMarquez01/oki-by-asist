@@ -1,0 +1,4 @@
+{
+  "_origen": "derivado de respuestas-reales-2026-11-04/send_invoice.json",
+  "respuesta": "{\"href\":\"https://www.sandbox.paypal.com/invoice/p/#INV2-27EX-CPU9-N7KF-F2VA\",\"rel\":\"payer-view\",\"method\":\"GET\"}"
+}
