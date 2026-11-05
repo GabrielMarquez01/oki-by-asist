@@ -1,4 +1,4 @@
-# OKI by AsisT
+# OKI de AsisT
 
 OKI is a keyless, bilingual DEMO of accounts receivable for a Mexican small service business. Every person, message, and transfer receipt is synthetic and labelled `DEMO`. The code only permits the PayPal sandbox for its real adapter; it does not select live mode.
 
