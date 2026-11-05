@@ -11,6 +11,9 @@ export const LecturaComprobanteSchema = z.object({
   metodo: z.string().min(1),
   referencia: z.string().min(1),
   banco: z.string().min(1).optional(),
+  bancoReceptor: z.string().min(1).optional(),
+  claveRastreo: z.string().min(1).optional(),
+  cuentaBeneficiaria: z.string().regex(/^(?:\d{4}|\d{18})$/).optional(),
   confianza: z.number().min(0).max(1),
   demo: z.boolean(),
 });

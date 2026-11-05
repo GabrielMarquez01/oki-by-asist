@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101B35">
+  <title>DEMO</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="coli"><img src="/brand.png" alt="Coli · DEMO"></span><span id="brand-name"></span></div>
+    <div class="tools"><strong id="mode" class="mode">DEMO</strong><button id="language" type="button">ES</button><button id="reset" type="button">Reset demo</button></div>
+  </header>
+  <main>
+    <div id="intro"></div>
+    <nav id="actors" class="actors" aria-label="Demo roles"></nav>
+    <p id="notice" role="status" aria-live="polite" aria-atomic="true"></p>
+    <div class="workspace">
+      <section id="owner" class="owner" aria-label="Owner">
+        <nav id="navigation" class="navigation" aria-label="Views"></nav>
+        <div id="view"></div>
+      </section>
+      <aside id="client" class="client" aria-label="Client"></aside>
+    </div>
+    <footer id="footer"></footer>
+  </main>
+</body>
+</html>

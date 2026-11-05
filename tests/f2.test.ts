@@ -12,7 +12,7 @@ import { politicaDemo } from "../src/politica.js";
 
 const fecha = "2026-11-04";
 function lectura(cambios: Partial<LecturaComprobante> = {}): LecturaComprobante {
-  return { monto: 600, moneda: "MXN", fecha, metodo: "spei", referencia: "DEMO-001 transferencia", banco: "Banco DEMO", confianza: 0.99, demo: true, ...cambios };
+  return { monto: 600, moneda: "MXN", fecha, metodo: "spei", referencia: "DEMO-001 transferencia", banco: "Banco DEMO", cuentaBeneficiaria: politicaDemo.cuentasCobro[0], confianza: 0.99, demo: true, ...cambios };
 }
 async function listo(): Promise<{ libro: ReturnType<typeof libroDemo>; paypal: PayPalSimulado }> {
   const libro = libroDemo(new Date(`${fecha}T12:00:00Z`)); const paypal = new PayPalSimulado();

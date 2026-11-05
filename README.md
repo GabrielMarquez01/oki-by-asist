@@ -1,4 +1,5 @@
 # OKI by AsisT
+> Actualizado: 2026-11-05 13:23
 
 <p align="center"><img src="assets/brand/oki-by-asist-banner.png" alt="OKI by AsisT — Coli the hummingbird mascot holding a paid receipt. Get paid the way Mexico pays." width="720"></p>
 
@@ -47,3 +48,19 @@ OKI es una DEMO bilingüe, sin llaves incluidas, para gestionar cuentas por cobr
 ### Configuración de IA
 
 Sin `GOOGLE_GENERATIVE_AI_API_KEY`, la demo usa texto fijo. Con una llave, Gemini redacta únicamente el mensaje DEMO al deudor; los montos, el empate y la aprobación siguen siendo deterministas. `OKI_GEMINI_MODEL` es opcional y sustituye el único modelo predeterminado de `src/ia/modelo.ts`. Si Gemini no está disponible, la demo lo informa y usa la plantilla. Nunca guardes una llave en el repositorio.
+
+## Run the UI
+
+```bash
+npm run ui
+# Spanish / Español; optional port / puerto opcional:
+OKI_LANG=es OKI_UI_PORT=4173 npm run ui
+```
+
+Open `http://127.0.0.1:4173`. **DEMO · PayPal simulated** without keys; **DEMO · PayPal sandbox** with both `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` injected. Only SANDBOX is accepted. Portfolio → collect overdue → send to simulated chat → client sends sample → approve → updated balance. Banxico: manual lookup with copyable CEP details. Desktop: both roles; mobile: tabs. Reset clears memory; PayPal keeps sandbox invoices.
+
+### Run the UI · Español
+
+Abre la misma dirección. **DEMO · PayPal simulado** sin llaves; **DEMO · PayPal sandbox** con ambas variables. Cartera → cobrar vencidos → chat simulado → muestra → aprobar → saldo actualizado. Banxico: consulta manual. Reiniciar vacía memoria local. Previene el doble uso de un comprobante y errores de monto. Solo datos sintéticos, sin subidas. Plantilla y muestra, sin IA.
+
+`BRAND_NAME`: `src/ui/state.ts`. Ambos modos usan `libroDemo`; solo se consultan cobros de sesión. Destino ilegible o distinto bloquea aprobación; si la cuenta es del negocio, declárala en `cuentasCobro`. Con `[]` no aplica esa regla. Sin CDN ni paquetes nuevos.

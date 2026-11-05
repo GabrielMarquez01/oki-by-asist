@@ -9,7 +9,8 @@
     "demo:es": "OKI_LANG=es node --import tsx src/cli.ts",
     "demo:sandbox": "node --import tsx src/cli.ts --sandbox",
     "demo:sandbox:es": "OKI_LANG=es node --import tsx src/cli.ts --sandbox",
-    "test": "vitest run"
+    "test": "vitest run",
+    "ui": "node --import tsx src/ui/main.ts"
   },
   "keywords": [],
   "author": "",
