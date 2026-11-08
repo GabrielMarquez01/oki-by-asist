@@ -1,6 +1,6 @@
 import { cuentaDestinoCoincide, type Conciliacion } from "../comprobantes/empatar.js";
 import type { Politica } from "../politica.js";
-import type { Idioma } from "../i18n.js";
+import { texto, type Idioma } from "../i18n.js";
 import { BRAND_NAME, type DemoUI } from "./state.js";
 
 export function presentar(demo: DemoUI, idioma: Idioma, politica: Politica, referencias: (c: Conciliacion) => string[]) {
@@ -15,7 +15,12 @@ export function presentar(demo: DemoUI, idioma: Idioma, politica: Politica, refe
         { id: "destination", ok: cuentaDestinoCoincide(l.cuentaBeneficiaria, politica) },
       ] };
     });
+    const detalles = Object.fromEntries(Object.entries(demo.detalles).map(([id, detalle]) => {
+      const borrador = detalle.mensaje ? detalle.borrador ?? { tipo: "pendiente" as const } : { tipo: "pendiente" as const };
+      return [id, { url: detalle.url, qr: detalle.qr, mensaje: detalle.mensaje, enviado: detalle.enviado,
+        borrador, rotuloBorrador: texto(idioma).draftStatus(borrador) }];
+    }));
     return { brand: BRAND_NAME, modo: demo.modo, idioma, actualizado: new Date().toISOString(), libro: demo.libro,
-      politica: politica, detalles: demo.detalles, historial: demo.historial, recibos,
+      politica: politica, detalles, historial: demo.historial, recibos,
       porAprobar: recibos.filter(r => !r.cerrado).length };
 }

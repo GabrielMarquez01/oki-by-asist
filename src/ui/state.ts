@@ -2,7 +2,7 @@ import{instrumentar}from "./provider.js";
 import{presentar}from "./presentation.js";
 import{libroDemo}from "../libro/index.js";
 import{politicaDemo}from "../politica.js";
-import{cobrarVencidas,RedactorPlantilla}from "../agente/cobrar.js";
+import{cobrarVencidas,seleccionarRedactor,type RedactorSeleccionado,type EstadoBorrador}from "../agente/cobrar.js";
 import{AgenteConciliador}from "../agente/conciliar.js";
 import{consultarCobros}from "../agente/consultar.js";
 import{LectorComprobanteSimulado}from "../comprobantes/lector.js";
@@ -13,7 +13,7 @@ export const BRAND_NAME="OKI by AsisT";
 export const politicaUI=politicaDemo;
 export type Modo="simulado" | "sandbox";
 type Historial={cuentaId:string;paso:string;resultado:"ok" | "error";hora:string};
-export type Detalle={url?:string;qr?:string;mensaje?:string;enviado?:boolean};
+export type Detalle={url?:string;qr?:string;mensaje?:string;enviado?:boolean;borrador?:EstadoBorrador};
 type Recibo={conciliacion:Conciliacion;cerrado:boolean;rechazado:boolean};
 export class ErrorUI extends Error{
 constructor(readonly codigo:string,readonly status=409){super(codigo);}
@@ -28,7 +28,7 @@ readonly agente:AgenteConciliador;
 private readonly paypal:CobrosPayPal;
 private readonly lector:LectorComprobanteSimulado;
 private readonly reservadas=new Set<string>();
-constructor(readonly modo:Modo,proveedor:CobrosPayPal,readonly hoy=new Date()){
+constructor(readonly modo:Modo,proveedor:CobrosPayPal,readonly hoy=new Date(),private readonly elegirRedactor:()=>RedactorSeleccionado=seleccionarRedactor){
 this.libro=libroDemo(hoy);this.lector=new LectorComprobanteSimulado(hoy);
 this.paypal=instrumentar(proveedor,this.libro,this.detalles,(id,paso,resultado)=> this.evento(id,paso,resultado));
 this.agente=new AgenteConciliador(this.libro,this.paypal);
@@ -37,11 +37,11 @@ private evento(cuentaId:string,paso:string,resultado:"ok" | "error"="ok"){
 this.historial.push({cuentaId,paso,resultado,hora:new Date().toISOString()});
 }
 async cobrar(idioma:Idioma){
-const redactor=new RedactorPlantilla();
+const redactor=this.elegirRedactor();
 await cobrarVencidas(this.libro,this.paypal,politicaUI,{
 redactar:async(cuenta,url,tono,lang)=>{
-const mensaje=await redactor.redactar(cuenta,url,tono,lang);
-this.detalles[cuenta.id]={...this.detalles[cuenta.id],url,mensaje};return mensaje;
+const mensaje=await redactor.redactor.redactar(cuenta,url,tono,lang);
+this.detalles[cuenta.id]={...this.detalles[cuenta.id],url,mensaje,borrador:redactor.estado()};return mensaje;
 },
 },idioma);
 for(const cuenta of this.libro.cuentas)if(cuenta.estado==="error")cuenta.motivoError="paypal";

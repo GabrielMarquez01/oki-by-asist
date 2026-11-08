@@ -1,5 +1,4 @@
 import type { Cuenta } from "./libro/index.js";
-import { modeloGemini } from "./ia/modelo.js";
 import type { EstadoBorrador } from "./agente/cobrar.js";
 
 export type Idioma = "en" | "es";
@@ -22,8 +21,9 @@ const textos = {
     recordingsSaved: "Sanitized sandbox responses saved in fixtures/.",
     demoError: "DEMO ERROR",
     draftStatus: (estado: EstadoBorrador) => {
+      if (estado.tipo === "pendiente") return "DRAFT · not generated yet";
       if (estado.tipo === "plantilla") return "TEMPLATE DRAFT · no API key (fixed text)";
-      if (estado.tipo === "ia_viva") return `AI DRAFT · Gemini ${modeloGemini()} · live`;
+      if (estado.tipo === "ia_viva") return `AI DRAFT · Gemini ${estado.modelo} · live`;
       return `AI UNAVAILABLE · ${estado.motivo} · using template`;
     },
     status: { pendiente: "pending", vencido: "overdue", por_confirmar: "awaiting confirmation", parcial: "partially paid", pagado: "paid", error: "error" },
@@ -44,8 +44,9 @@ const textos = {
     recordingsSaved: "Respuestas sandbox sanitizadas guardadas en fixtures/.",
     demoError: "ERROR DEMO",
     draftStatus: (estado: EstadoBorrador) => {
+      if (estado.tipo === "pendiente") return "BORRADOR · aún sin generar";
       if (estado.tipo === "plantilla") return "BORRADOR DE PLANTILLA · sin llave API (texto fijo)";
-      if (estado.tipo === "ia_viva") return `BORRADOR IA · Gemini ${modeloGemini()} · en vivo`;
+      if (estado.tipo === "ia_viva") return `BORRADOR IA · Gemini ${estado.modelo} · en vivo`;
       return `IA NO DISPONIBLE · ${estado.motivo} · usando plantilla`;
     },
     status: { pendiente: "pendiente", vencido: "vencido", por_confirmar: "por confirmar", parcial: "parcial", pagado: "pagado", error: "error" },

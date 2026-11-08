@@ -7,3 +7,7 @@ fixtures/raw/
 *.p12
 *.pfx
 service-account*.json
+
+# Offline verification and mutation evidence (retained locally).
+.verificacion/
+tests/.mutantes-ui/

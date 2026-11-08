@@ -13,7 +13,7 @@ describe("F1 cobrar", () => {
   });
   it("selecciona plantilla sin llave y Gemini con llave", () => {
     expect(seleccionarRedactor({}).estado()).toEqual({ tipo: "plantilla" });
-    expect(seleccionarRedactor({ GOOGLE_GENERATIVE_AI_API_KEY: "llave-sintetica" }).estado()).toEqual({ tipo: "ia_viva" });
+    expect(seleccionarRedactor({ GOOGLE_GENERATIVE_AI_API_KEY: "llave-sintetica" }).estado()).toEqual({ tipo: "pendiente" });
   });
   it("una falla del redactor usa plantilla sin afectar el flujo", async () => {
     const fallido: Redactor = { redactar: async () => { throw Object.assign(new Error("no usar"), { statusCode: 404 }); } };

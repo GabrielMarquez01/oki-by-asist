@@ -1,4 +1,4 @@
-import { cobrarVencidas, seleccionarRedactor } from "./agente/cobrar.js";
+import { cobrarVencidas, seleccionarRedactor, type EstadoBorrador } from "./agente/cobrar.js";
 import { consultarCobros } from "./agente/consultar.js";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -37,8 +37,14 @@ async function main(): Promise<void> {
   console.log("LEDGER_BEFORE_JSON", JSON.stringify(libro, null, 2));
   const paypal = sandbox ? new PayPalReal(process.env.PAYPAL_CLIENT_ID ?? "", process.env.PAYPAL_CLIENT_SECRET ?? "", grabar ? grabadora : undefined) : new PayPalSimulado();
   const redactor = seleccionarRedactor();
-  const mensajes = await cobrarVencidas(libro, paypal, politicaDemo, redactor.redactor, idioma);
-  console.log(t.draftStatus(redactor.estado()));
+  const borradores: EstadoBorrador[] = [];
+  const mensajes = await cobrarVencidas(libro, paypal, politicaDemo, {
+    redactar: async (cuenta, url, tono, lang) => {
+      const mensaje = await redactor.redactor.redactar(cuenta, url, tono, lang);
+      borradores.push(redactor.estado());
+      return mensaje;
+    },
+  }, idioma);
   if (sandbox) {
     const invoiceId = libro.cuentas[0].paypalInvoiceId;
     if (!invoiceId) {
@@ -59,7 +65,8 @@ async function main(): Promise<void> {
     const conciliacionDudosa = empatarComprobante("CON-DEMO-002", dudoso, libro, politicaDemo, agente.referenciasUsadas);
     console.log(t.suspiciousReceipt); console.log("SUSPICIOUS_RECEIPT_JSON", JSON.stringify(conciliacionDudosa));
   }
-  console.log(t.debtorMessages, mensajes.join("\n"));
+  console.log(t.debtorMessages);
+  mensajes.forEach((mensaje, indice) => console.log(t.draftStatus(borradores[indice]), mensaje));
   console.log(t.ledgerAfter); libro.cuentas.forEach((cuenta) => console.log(t.summary(cuenta)));
   console.log("LEDGER_AFTER_JSON", JSON.stringify(libro, null, 2));
   if (grabar) console.log(t.recordingsSaved);
